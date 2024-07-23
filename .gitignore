@@ -1,0 +1,10 @@
+.idea/
+contrib/
+
+.DS_Store
+
+*.npy
+*.pkl
+*.pth
+data/
+out_images/

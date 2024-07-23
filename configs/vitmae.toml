@@ -1,0 +1,50 @@
+# python vitmae.py --config configs/vitmae.toml
+
+COMMENT = "Run 17: Running 8x8 patch"
+LOG_DIR = "logs/vitmae/17/"
+
+RANDOM_SEED = 42
+
+BATCH_SIZE = 32 # effective size --> BATCH_SIZE * 16
+NUM_EPOCHS = 100
+
+SCHEDULER = 1
+PCT_START = 0.1
+DIV_FACTOR = 100
+FINAL_DIV_FACTOR = 1.0
+
+BETA_1 = 0.90
+BETA_2 = 0.95  # FB ViTMAE article (0.95)
+WEIGHT_DECAY = 0.0
+LEARNING_RATE = 1.0e-3
+
+SAVE_MODELS = 1
+
+# -----> ViTMAE Model<-----
+IMAGE_SIZE = 64
+PATCH_SIZE = 8
+NUM_CHANNELS = 16
+
+MASK_RATIO = 0.5
+NORM_PIX_LOSS = 1
+LAYER_NORM_EPS = 1e-6
+
+HIDDEN_SIZE = 192
+INTERMEDIATE_SIZE = 768 
+NUM_HIDDEN_LAYERS = 6
+NUM_ATTENTION_HEADS = 6
+
+HIDDEN_DROPOUT_PROB = 0.0
+ATTENTION_PROBS_DROPOUT_PROB = 0.0
+
+DECODER_HIDDEN_SIZE = 192
+DECODER_INTERMEDIATE_SIZE = 768
+DECODER_NUM_HIDDEN_LAYERS = 6
+DECODER_NUM_ATTENTION_HEADS = 6
+
+# sideswipe.research.cs.dal.ca
+TRAIN_DATASET = '/home/mhill/Projects/cathepsin/data/training_dataset.npy'
+VALID_DATASET = '/home/mhill/Projects/cathepsin/data/validation_dataset.npy'
+TEST_DATASET = '/home/mhill/Projects/cathepsin/data/testing_dataset.npy'
+
+
