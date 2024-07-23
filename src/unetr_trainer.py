@@ -109,6 +109,7 @@ class UNETR_TRAINER():
             total_loss += loss.item() * inputs.size(dim=0)
             num_samples += inputs.size(dim = 0)
 
+            '''To caluclate metrics, similar to ignore index 255'''
             mask = targets != 255
             masked_outputs = outputs.permute(0, 2, 3, 1)[mask]  # permute to bring the class dimension last and then apply mask
             masked_targets = targets[mask]
