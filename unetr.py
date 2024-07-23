@@ -93,7 +93,7 @@ if __name__ == '__main__':
     logging.info(f"Valid -> {len(valid_dataset)}, {len(valid_dataloader)} (samples, batches)")
     logging.info(f"Test  -> {len(test_dataset)},  {len(test_dataloader)}  (samples, batches)")
 
-    # ------- TRANSFER WEIGHT OF EXSISTING VITMAE ENCODER INTO UNETR VIT ENCODER ---------
+    # ------- TRANSFER WEIGHT OF EXISTING VITMAE ENCODER INTO UNETR VIT ENCODER ---------
     vitmaeconfig = { 
         "attention_probs_dropout_prob": 0.0,
         "decoder_hidden_size": 192,
@@ -135,15 +135,17 @@ if __name__ == '__main__':
         "qkv_bias": vitmaeconfig["qkv_bias"],
         "encoder_stride": vitmaeconfig["patch_size"],
     }
-    # Extracting Pretrained VITMAE Encoder
 
+    # Extracting Pretrained VITMAE Encoder
     vitmae_model = ViTMAEForPreTraining(config = ViTMAEConfig(**vitmaeconfig))
     
-    # Comment below to run a non Pretrained model
+    # Comment below to run a non-Pretrained model
     pretrained_model_path = config["PRE_TRAINED_MODEL"]
     logging.info(f"Pretrained Model Path : {pretrained_model_path}")
     checkpoint = torch.load(pretrained_model_path)
     vitmae_model.load_state_dict(checkpoint['model_state_dict'])
+
+
 
     # Transfer to new VITCONFIG
     vitmae_encoder = vitmae_model.vit
@@ -177,12 +179,6 @@ if __name__ == '__main__':
                                  betas=([config["BETA_1"], config["BETA_2"]]),
                                  lr=config["LEARNING_RATE"],
                                  weight_decay = config["WEIGHT_DECAY"])
-
-    # adamw = torch.optim.AdamW(unet_model.parameters,
-    #                           lr = config["LEARNING_RATE"],
-    #                           betas=(config["BETA_1"], config["BETA_2"]),
-    #                           weight_decay=config["WEIGHT_DECAY"]
-    #                         )
     
 
     trainer = UNETR_TRAINER(
