@@ -76,7 +76,7 @@ def plot_mae_super(mae_dict, resolution='super'):
 
 
 '''Function to view output prediction in view_out.py'''
-def visualize_predictions(num_images, images, predictions, labels = None):
+def visualize_predictions(num_images, images, predictions, labels):
     plt.figure(figsize=(15, num_images * 5))
     for i in range(num_images):
         # Original image
