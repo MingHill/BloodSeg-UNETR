@@ -74,17 +74,17 @@ class CustomUNETR2(nn.Module):
         return x 
 
 
-    def forward(self, input): # Input shape: [16, 16, 64, 64] (B, C, H, W)
+    def forward(self, input): 
 
         vit_out = self.encoder(input, output_hidden_states = True) 
-        last_hidden_state = vit_out.last_hidden_state # torch.Size([16, 257, 192])
-        last_hidden_state_no_cls = last_hidden_state[:, 1:, :]  # torch.Size([16, 256, 192])
-        enc1 = self.encoder1(input) # enc1 shape: torch.Size([16, 4, 64, 64]) (B, FS, H, W)
+        last_hidden_state = vit_out.last_hidden_state 
+        last_hidden_state_no_cls = last_hidden_state[:, 1:, :]  
+        enc1 = self.encoder1(input) 
 
-        dec1 = self.proj_feat(last_hidden_state_no_cls) # torch.Size([16, 192, 16, 16])
+        dec1 = self.proj_feat(last_hidden_state_no_cls) 
         
-        out = self.decoder2(dec1, enc1) # torch.Size([16, 32, 64, 64])
-        logits = self.out(out) # torch.Size([16, 16, 64, 64])
+        out = self.decoder2(dec1, enc1) 
+        logits = self.out(out) 
 
         return logits
 
@@ -185,7 +185,7 @@ if __name__ == "__main__":
     print(f"Valid label {valid_next[1].shape} \n")
     print("Starting Training \n_____________________________________ \n")
     device = select_device()
-    unet_model = CustomUNETR(encoder=vit, num_classes = 16, feature_size=32).to(device)
+    unet_model = CustomUNETR2(encoder=vit, num_classes = 16, feature_size=32).to(device)
     criterion = nn.CrossEntropyLoss(ignore_index=255)
     optimizer = torch.optim.Adam(unet_model.parameters(), lr=1e-3)
     

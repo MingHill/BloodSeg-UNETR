@@ -153,16 +153,19 @@ if __name__ == '__main__':
     vit.load_state_dict(vitmae_encoder.state_dict(), strict=False)
 
 
-    # Select which model 
+    #  ------Select which model --------
+
+    # 2x2 Model
     unet_model = CustomUNETR2(encoder=vit,
                              num_classes = config["NUM_CLASSES"],
                              feature_size=config["FEATURE_SIZE"]).to(device)
     
+    # 4x4 Model
     # unet_model = CustomUNETR(encoder=vit,
     #                          num_classes = config["NUM_CLASSES"],
     #                          feature_size=config["FEATURE_SIZE"]).to(device)
     
-
+    # 8x8 Model
     # unet_model = CustomUNETR8(encoder=vit,
     #                          num_classes = config["NUM_CLASSES"],
     #                          feature_size=config["FEATURE_SIZE"]).to(device)
