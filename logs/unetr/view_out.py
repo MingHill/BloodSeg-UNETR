@@ -45,6 +45,7 @@ def report_metrics(model, test_dataloader):
     print("\n")
     print(f" Class Report : \n {class_report}")
     print("\n")
+    print("Confusion Matrix: \n")
     c_matrix = confusion_matrix(y_true=gt, y_pred=pred)
     print(c_matrix)
 
@@ -64,4 +65,4 @@ def segment(model, test_dataloader):
         predictions_np = predictions.cpu().numpy()
         print(f"Shape of image_np : {images_np.shape} | Label_np : {labels_np.shape} | Predictions : {predictions_np.shape}")
         # Visualize the predictions
-        visualize_predictions(20, images=images_np, labels=labels_np, predictions=predictions_np)
+        visualize_predictions(5, images=images_np, labels=labels_np, predictions=predictions_np)
