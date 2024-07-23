@@ -74,44 +74,49 @@ def plot_mae_super(mae_dict, resolution='super'):
     plt.tight_layout()
     plt.show()
 
+
+'''Function to view output prediction in view_out.py'''
 def visualize_predictions(num_images, images, predictions, labels = None):
-    if labels != None:
-        plt.figure(figsize=(15, num_images * 5))
-        for i in range(num_images):
-            # Original image
-            plt.subplot(num_images, 3, i * 3 + 1)
-            image = images[i].transpose(1, 2, 0)[:,:,:3]
-            # plt.imshow(images[i].transpose(2, 1, 0))  # Assuming the image shape is (C, H, W)
-            plt.imshow(image)
-            plt.title("Original Image")
-            plt.axis('off')
-            
-            # Ground truth mask
-            plt.subplot(num_images, 3, i * 3 + 2)
-            plt.imshow(labels[i])
-            plt.title("Ground Truth Mask")
-            plt.axis('off')
-            
-            # Predicted mask
-            plt.subplot(num_images, 3, i * 3 + 3)
-            plt.imshow(predictions[i][:,:])
-            plt.title("Predicted Mask")
-            plt.axis('off')
-        plt.show()
-    else: 
-        plt.figure(figsize=(15, num_images * 5))
-        for i in range(num_images):
-            # Original image
-            plt.subplot(num_images, 3, i * 3 + 1)
-            image = images[i].transpose(1, 2, 0)[:,:,:3]
-            # plt.imshow(images[i].transpose(2, 1, 0))  # Assuming the image shape is (C, H, W)
-            plt.imshow(image)
-            plt.title("Original Image")
-            plt.axis('off')
-            
-            # Predicted mask
-            plt.subplot(num_images, 3, i * 3 + 3)
-            plt.imshow(predictions[i][:,:])
-            plt.title("Predicted Mask")
-            plt.axis('off')
-        plt.show()
+    plt.figure(figsize=(15, num_images * 5))
+    for i in range(num_images):
+        # Original image
+        plt.subplot(num_images, 3, i * 3 + 1)
+        image = images[i].transpose(1, 2, 0)[:,:,:3]
+        # plt.imshow(images[i].transpose(2, 1, 0))  # Assuming the image shape is (C, H, W)
+        plt.imshow(image)
+        plt.title("Original Image")
+        plt.axis('off')
+        
+        # Ground truth mask
+        plt.subplot(num_images, 3, i * 3 + 2)
+        plt.imshow(labels[i])
+        plt.title("Ground Truth Mask")
+        plt.axis('off')
+        
+        # Predicted mask
+        plt.subplot(num_images, 3, i * 3 + 3)
+        plt.imshow(predictions[i][:,:])
+        plt.title("Predicted Mask")
+        plt.axis('off')
+    plt.show()
+    
+
+
+'''Function to visualize inference on in iference.ipynb'''
+def visualize_inference(images, predictions, num_images = 1 ): 
+    plt.figure(figsize=(15, num_images * 5))
+    for i in range(num_images):
+        # Original image
+        plt.subplot(num_images, 3, i * 3 + 1)
+        image = images[i].transpose(1, 2, 0)[:,:,:3]
+        # plt.imshow(images[i].transpose(2, 1, 0))  # Assuming the image shape is (C, H, W)
+        plt.imshow(image)
+        plt.title("Original Image")
+        plt.axis('off')
+        
+        # Predicted mask
+        plt.subplot(num_images, 3, i * 3 + 3)
+        plt.imshow(predictions[i][:,:])
+        plt.title("Predicted Mask")
+        plt.axis('off')
+    plt.show()
