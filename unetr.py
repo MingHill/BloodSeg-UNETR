@@ -107,7 +107,7 @@ if __name__ == '__main__':
         "initializer_range": 0.02,
         "intermediate_size": 768,
         "layer_norm_eps": 1e-06,
-        "mask_ratio": 0.75,
+        "mask_ratio": 0.50,
         "model_type": "vit_mae",
         "norm_pix_loss": 1,
         "num_attention_heads": 6,
@@ -152,6 +152,9 @@ if __name__ == '__main__':
     vit = ViTModel(config=ViTConfig(**vitconfig)).to(device)
     vit.load_state_dict(vitmae_encoder.state_dict(), strict=False)
 
+    # Freeze encoder params 
+    # for param in vit.parameters(): 
+    #     param.requires_grad = False 
 
     #  ------Select which model --------
 
@@ -178,11 +181,17 @@ if __name__ == '__main__':
 
     criterion = nn.CrossEntropyLoss(ignore_index=255)
 
-    adam = torch.optim.Adam(unet_model.parameters(),
-                                 betas=([config["BETA_1"], config["BETA_2"]]),
-                                 lr=config["LEARNING_RATE"],
-                                 weight_decay = config["WEIGHT_DECAY"])
+    # adam = torch.optim.Adam(unet_model.parameters(),
+    #                              betas=([config["BETA_1"], config["BETA_2"]]),
+    #                              lr=config["LEARNING_RATE"],
+    #                              weight_decay = config["WEIGHT_DECAY"])
     
+    adam = torch.optim.Adam(
+        filter(lambda p: p.requires_grad, unet_model.parameters()),
+        lr=config["LEARNING_RATE"],
+        betas=([config["BETA_1"], config["BETA_2"]]),
+        weight_decay=config["WEIGHT_DECAY"]
+    )
 
     trainer = UNETR_TRAINER(
         model = unet_model, 
@@ -198,10 +207,11 @@ if __name__ == '__main__':
         valid_batches=valid_dataloader,
         save_checkpoint= config["SAVE_MODELS"], 
         log_batch_loss=True,
-        train_eval_batches=train_dataloader
+        train_eval_batches=train_dataloader,
+        freeze_threshold=0
     )
 
-    test_loss, class_report = trainer.test(test_dataloader)
+    test_loss, class_report, _, _ = trainer.test(test_dataloader)
     logging.info(f"Test Loss: {test_loss:.4f}")
     logging.info(f"Classification report : \n {class_report}")
 

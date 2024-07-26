@@ -1,11 +1,11 @@
 # python unetr.py --config configs/unetr.toml 
-COMMENT = "Run 23: Patch 2 w/augmented data 150 epochs, 128 feature size, .75 mask ration"
-LOG_DIR = "logs/unetr/23/"
+COMMENT = "Run 28: Patch 2 w/augmented data 200 epochs, 128 feature size, .50 mask ration, no pre-training"
+LOG_DIR = "logs/unetr/28/"
 
 RANDOM_SEED = 42
 
-BATCH_SIZE = 16 
-NUM_EPOCHS = 150
+BATCH_SIZE = 32 
+NUM_EPOCHS = 200
 
 # --- OPTIMIZER ---
 BETA_1 = 0.90
@@ -29,7 +29,7 @@ TRAIN_DATASET = '/home/mhill/Projects/cathepsin/data/unet_training_dataset.npz'
 VALID_DATASET = '/home/mhill/Projects/cathepsin/data/unet_validation_dataset.npz'
 TEST_DATASET = '/home/mhill/Projects/cathepsin/data/unet_testing_dataset.npz'
 
-PRE_TRAINED_MODEL  = '/home/mhill/Projects/cathepsin/logs/vitmae/14/model.pth' 
+PRE_TRAINED_MODEL  = '/home/mhill/Projects/cathepsin/logs/vitmae/12/model.pth' 
 # PRE_TRAINED_MODEL = '/home/mhill/Projects/cathepsin/logs/vitmae/09/model.pth' #4x4 
 # PRE_TRAINED_MODEL = '/home/mhill/Projects/cathepsin/logs/vitmae/17/model.pth' #8x8 
 

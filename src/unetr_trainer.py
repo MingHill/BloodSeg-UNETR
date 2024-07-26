@@ -20,6 +20,7 @@ class UNETR_TRAINER():
             train_batches,
             valid_batches,
             train_eval_batches,
+            freeze_threshold = None,
             save_checkpoint=False, 
             log_batch_loss = False
             ): 
@@ -27,6 +28,11 @@ class UNETR_TRAINER():
         
         train_losses, valid_losses = [], []
         for epoch in range(num_epochs): 
+            # if epoch == freeze_threshold: 
+            #     for param in self.model.encoder.parameters():
+            #         param.requires_grad = True
+            #     self.optimizer.add_param_group({'params': self.model.encoder.parameters()})
+
             for i , (input, targets) in enumerate(train_batches): 
                 input, targets = input.to(self.device), targets.to(self.device)
                 self.optimizer.zero_grad()
@@ -101,7 +107,7 @@ class UNETR_TRAINER():
         total_ground_truth = []
         total_predicted = []
         for i, (inputs, targets) in enumerate(data_batches):
-            
+
             inputs, targets = inputs.to(self.device), targets.to(self.device)
             outputs = self.model(inputs) 
             loss = self.criterion(outputs, targets)

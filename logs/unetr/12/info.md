@@ -1,7 +1,7 @@
 2024-07-17 21:45:14,984 - INFO - {'BATCH_SIZE': 32,
  'BETA_1': 0.9,
  'BETA_2': 0.95,
- 'COMMENT': 'Run 12: Patch 12 w/augmented data 100 epochs, 32 feature size',
+ 'COMMENT': 'Run 12: Patch 8 w/augmented data 100 epochs, 32 feature size',
  'FEATURE_SIZE': 32,
  'IN_CHANNEL': 16,
  'LEARNING_RATE': 1e-05,
