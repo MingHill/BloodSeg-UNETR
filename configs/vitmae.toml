@@ -32,7 +32,7 @@ LAYER_NORM_EPS = 1e-6
 HIDDEN_SIZE = 192
 INTERMEDIATE_SIZE = 768 
 NUM_HIDDEN_LAYERS = 6
-NUM_ATTENTION_HEADS 
+NUM_ATTENTION_HEADS = 6
 
 HIDDEN_DROPOUT_PROB = 0.0
 ATTENTION_PROBS_DROPOUT_PROB = 0.0
@@ -42,7 +42,7 @@ DECODER_INTERMEDIATE_SIZE = 768
 DECODER_NUM_HIDDEN_LAYERS = 6
 DECODER_NUM_ATTENTION_HEADS = 6
 
-# sideswipe.research.cs.dal.ca
+
 TRAIN_DATASET = '/home/mhill/Projects/cathepsin/data/training_dataset.npy'
 VALID_DATASET = '/home/mhill/Projects/cathepsin/data/validation_dataset.npy'
 TEST_DATASET = '/home/mhill/Projects/cathepsin/data/testing_dataset.npy'
