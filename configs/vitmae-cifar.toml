@@ -37,7 +37,7 @@ DECODER_INTERMEDIATE_SIZE = 128
 DECODER_NUM_HIDDEN_LAYERS = 2
 DECODER_NUM_ATTENTION_HEADS = 4
 
-# sentinel.research.cs.dal.ca
+
 #DATASOURCE = "/Users/martin/Sites/datasets/third-party/pytorch-datasets"
 
 # bumblebee.research.cs.dal.ca
