@@ -24,7 +24,7 @@ RES_BLOCK = true
 
 SAVE_MODELS = 1
 
-# sideswipe.research.cs.dal.ca
+
 TRAIN_DATASET = '/home/mhill/Projects/cathepsin/data/unet_training_dataset.npz'
 VALID_DATASET = '/home/mhill/Projects/cathepsin/data/unet_validation_dataset.npz'
 TEST_DATASET = '/home/mhill/Projects/cathepsin/data/unet_testing_dataset.npz'
