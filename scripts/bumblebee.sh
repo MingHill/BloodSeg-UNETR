@@ -8,4 +8,3 @@ PROJECT="/home/hmgillis/projects/python/cathepsin"
 
 # run python script
 cd $PROJECT && python $PROJECT/vitmae.py --config configs/vitmae.toml
-#cd $PROJECT && python $PROJECT/vitmae-cifar.py --config configs/vitmae-cifar.toml

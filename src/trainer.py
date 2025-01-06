@@ -7,22 +7,25 @@ import torch
 
 
 class Trainer:
-    def __init__(self, model, optimizer, scheduler=None, log_dir="./logs", device="cpu"):
+    def __init__(
+        self, model, optimizer, scheduler=None, log_dir="./logs", device="cpu"
+    ):
         self.model = model
         self.optimizer = optimizer
         self.device = device
         self.scheduler = scheduler
         self.log_dir = log_dir
 
-    def fit(self,
-            num_epochs,
-            train_batches,
-            valid_batches,
-            train_eval_batches,
-            num_eval_batches=None,
-            log_batch_loss=False,
-            save_checkpoint=False
-            ):
+    def fit(
+        self,
+        num_epochs,
+        train_batches,
+        valid_batches,
+        train_eval_batches,
+        num_eval_batches=None,
+        log_batch_loss=False,
+        save_checkpoint=False,
+    ):
         # set model to training mode
         self.model.train()
 

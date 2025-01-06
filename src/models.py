@@ -1,9 +1,6 @@
-import random
-
 import numpy as np
 
 import torch
-import torch.nn as nn
 
 from transformers import ViTMAEConfig, ViTMAEForPreTraining
 from transformers.models.vit_mae.modeling_vit_mae import ViTMAEEmbeddings
@@ -11,7 +8,7 @@ from transformers.models.vit_mae.modeling_vit_mae import ViTMAEEmbeddings
 
 # see modeling_vit_mae from transformers package
 class ViTMAEEmbeddingsMasking(ViTMAEEmbeddings):
-    def __init__(self, config, device, masking_type='random'):
+    def __init__(self, config, device, masking_type="random"):
         super().__init__(config)
         self.device = device
         self.masking_type = masking_type
@@ -36,7 +33,11 @@ class ViTMAEEmbeddingsMasking(ViTMAEEmbeddings):
 
         masked_sequence = sequence.to(self.device) * mask.unsqueeze(-1)
 
-        ids_restore = torch.arange(num_patches, device=sequence.device).unsqueeze(0).repeat(batch_size, 1)
+        ids_restore = (
+            torch.arange(num_patches, device=sequence.device)
+            .unsqueeze(0)
+            .repeat(batch_size, 1)
+        )
 
         return masked_sequence, mask, ids_restore
 
@@ -54,17 +55,23 @@ class ViTMAEEmbeddingsMasking(ViTMAEEmbeddings):
         len_keep = int(seq_length * (1 - self.config.mask_ratio))
 
         if noise is None:
-            noise = torch.rand(batch_size, seq_length, device=sequence.device)  # noise in [0, 1]
+            noise = torch.rand(
+                batch_size, seq_length, device=sequence.device
+            )  # noise in [0, 01]
 
         # sort noise for each sample
-        ids_shuffle = torch.argsort(noise, dim=1).to(sequence.device)  # ascend: small is keep, large is removed
+        ids_shuffle = torch.argsort(noise, dim=1).to(
+            sequence.device
+        )  # ascend: small is keep, large is removed
         ids_restore = torch.argsort(ids_shuffle, dim=1).to(sequence.device)
 
         # keep the first subset
         ids_keep = ids_shuffle[:, :len_keep]
-        sequence_unmasked = torch.gather(sequence, dim=1, index=ids_keep.unsqueeze(-1).repeat(1, 1, dim))
+        sequence_unmasked = torch.gather(
+            sequence, dim=1, index=ids_keep.unsqueeze(-1).repeat(1, 1, dim)
+        )
 
-        # generate the binary mask: 0 is keep, 1 is removed
+        # generate the binary mask: 0 is keep, 01 is removed
         mask = torch.ones([batch_size, seq_length], device=sequence.device)
         mask[:, :len_keep] = 0
 
@@ -75,9 +82,13 @@ class ViTMAEEmbeddingsMasking(ViTMAEEmbeddings):
 
     def forward(self, pixel_values, noise=None, interpolate_pos_encoding=False):
         batch_size, num_channels, height, width = pixel_values.shape
-        embeddings = self.patch_embeddings(pixel_values, interpolate_pos_encoding=interpolate_pos_encoding)
+        embeddings = self.patch_embeddings(
+            pixel_values, interpolate_pos_encoding=interpolate_pos_encoding
+        )
         if interpolate_pos_encoding:
-            position_embeddings = self.interpolate_pos_encoding(embeddings, height, width)
+            position_embeddings = self.interpolate_pos_encoding(
+                embeddings, height, width
+            )
         else:
             position_embeddings = self.position_embeddings
 
@@ -85,13 +96,16 @@ class ViTMAEEmbeddingsMasking(ViTMAEEmbeddings):
         embeddings = embeddings + position_embeddings[:, 1:, :]
 
         # masking: length -> length * config.mask_ratio
-        if self.masking_type == 'grid':
+        if self.masking_type == "grid":
             embeddings, mask, ids_restore = self.grid_masking(embeddings, noise)
-        elif self.masking_type == 'random':
+        elif self.masking_type == "random":
             embeddings, mask, ids_restore = self.random_masking(embeddings, noise)
         else:
             raise ValueError(
-                "Invalid masking type. Expected 'grid' or 'random', got {}".format(self.masking_type))
+                "Invalid masking type. Expected 'grid' or 'random', got {}".format(
+                    self.masking_type
+                )
+            )
 
         # append cls token
         cls_token = self.cls_token + position_embeddings[:, :1, :]
@@ -101,43 +115,47 @@ class ViTMAEEmbeddingsMasking(ViTMAEEmbeddings):
         return embeddings, mask, ids_restore
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     vitmaeconfig = {
-        'image_size': 64,
-        'patch_size': 4,
-        'num_channels': 16,
+        "image_size": 64,
+        "patch_size": 4,
+        "num_channels": 16,
         #
-        'mask_ratio': 0.50,
-        'norm_pix_loss': True,
+        "mask_ratio": 0.50,
+        "norm_pix_loss": True,
         #
-        'hidden_size': 192,
-        'intermediate_size': 768,
-        'num_hidden_layers': 12,
-        'num_attention_heads': 12,
+        "hidden_size": 192,
+        "intermediate_size": 768,
+        "num_hidden_layers": 12,
+        "num_attention_heads": 12,
         #
-        'hidden_dropout_prob': 0.0,
-        'attention_probs_dropout_prob': 0.0,
-        #
-        'decoder_hidden_size': 192,
-        'decoder_intermediate_size': 768,
-        'decoder_num_hidden_layers': 12,
-        'decoder_num_attention_heads': 12,
+        "decoder_hidden_size": 192,
+        "decoder_intermediate_size": 768,
+        "decoder_num_hidden_layers": 12,
+        "decoder_num_attention_heads": 12,
     }
     model = ViTMAEForPreTraining(config=ViTMAEConfig(**vitmaeconfig))
 
     model.vit.embeddings = ViTMAEEmbeddingsMasking(
         config=ViTMAEConfig(**vitmaeconfig),
-        device=torch.device('cpu'),
-        masking_type='grid'
+        device=torch.device("cpu"),
+        masking_type="grid",
     )
 
     print(model)
     print(model.config)
 
     print(f"Parameters: {sum(param.numel() for param in model.parameters())}")
-    print(f"Trainable parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad)}\n")
+    print(
+        f"Trainable parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad)}\n"
+    )
 
-    sample = torch.randn(1, vitmaeconfig["num_channels"], vitmaeconfig["image_size"], vitmaeconfig["image_size"])
+    sample = torch.randn(
+        1,
+        vitmaeconfig["num_channels"],
+        vitmaeconfig["image_size"],
+        vitmaeconfig["image_size"],
+    )
     outputs = model(sample)
 
     logits = outputs.logits

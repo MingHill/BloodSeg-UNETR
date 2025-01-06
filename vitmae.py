@@ -1,23 +1,19 @@
-import os
-import time
-import toml
-import pprint
-import logging
 import argparse
+import logging
+import os
+import pprint
+import time
 
 import numpy as np
-
+import toml
 import torch
-from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import OneCycleLR
-
+from torch.utils.data import DataLoader
 from transformers import ViTMAEConfig, ViTMAEForPreTraining
 
-from src.trainer import Trainer
 from src.datasets import CustomDataset, collate_fn_train, collate_fn_valid_test
-
+from src.trainer import Trainer
 from src.utils import select_device
-
 
 if __name__ == '__main__':
     tic = time.time()
@@ -41,9 +37,6 @@ if __name__ == '__main__':
     np.random.seed(config["RANDOM_SEED"])
     torch.manual_seed(config["RANDOM_SEED"])
     torch.cuda.manual_seed(config["RANDOM_SEED"])
-
-    # enable for debugging (slows down compute)
-    torch.backends.cudnn.deterministic = False
 
     # ----------------------> datasets <----------------------
     os.environ["TRAIN_DATASET"] = os.path.expandvars(config["TRAIN_DATASET"])

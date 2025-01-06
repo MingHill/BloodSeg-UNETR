@@ -1,44 +1,45 @@
 import numpy as np
-from matplotlib import pyplot as plt
-
 import torch
-from torchvision import transforms, datasets
-from torch.utils.data import Dataset, random_split, DataLoader
+from torch.utils.data import Dataset, DataLoader
+from torchvision import transforms
 
 
 class CustomDataset(Dataset):
-    def __init__(self, data, num_channels = 16):
+    def __init__(self, data, num_channels=16):
         super().__init__()
         self.num_channels = num_channels
         self.data = data
-        
+
     def __getitem__(self, index):
-        return self.data[index][:self.num_channels, :, :]
+        return self.data[index][: self.num_channels, :, :]
 
     def __len__(self):
         return len(self.data)
 
-# class UnetLabelDataset(Dataset): 
-#     def __init__(self, data): 
+
+# class UnetLabelDataset(Dataset):
+#     def __init__(self, data):
 #         super().__init__()
 #         self.data = data
-    
+
 #     def __getitem__(self, index):
 #         return self.data[index]
 
-#     def __len__(self): 
+#     def __len__(self):
 #         return len(self.data)
 
-class UnetCustomDataset(Dataset): 
-    def __init__(self, images, labels, num_channels = 16): 
+
+class UnetCustomDataset(Dataset):
+    def __init__(self, images, labels, num_channels=16):
         self.images = images
         self.labels = labels
         self.num_channels = num_channels
+
     def __len__(self):
         return len(self.images)
 
     def __getitem__(self, idx):
-        image = self.images[idx][:self.num_channels, :, :]
+        image = self.images[idx][: self.num_channels, :, :]
         label = self.labels[idx]
         return image, label
 
@@ -59,12 +60,12 @@ class CustomCIFAR10Dataset(Dataset):
 
         return image
 
+
 class CustomTransform:
     def __init__(self):
-        self.transform = transforms.Compose([
-            transforms.RandomHorizontalFlip(),
-            transforms.RandomVerticalFlip()
-        ])
+        self.transform = transforms.Compose(
+            [transforms.RandomHorizontalFlip(), transforms.RandomVerticalFlip()]
+        )
 
     def __call__(self, image, label):
         seed = torch.random.seed()
@@ -75,6 +76,7 @@ class CustomTransform:
         label = self.transform(label)
 
         return image, label
+
 
 def create_patches(image, patch_size=64, stride=64):
     if isinstance(image, np.ndarray):
@@ -96,10 +98,12 @@ def create_patches(image, patch_size=64, stride=64):
 
 
 def collate_fn_train(batch):
-    transform = transforms.Compose([
-        transforms.RandomVerticalFlip(),
-        transforms.RandomHorizontalFlip(),
-    ])
+    transform = transforms.Compose(
+        [
+            transforms.RandomVerticalFlip(),
+            transforms.RandomHorizontalFlip(),
+        ]
+    )
 
     stride = 64
     patch_size = 64
@@ -116,7 +120,6 @@ def collate_fn_train(batch):
 
 
 def collate_fn_valid_test(batch):
-
     stride = 64
     patch_size = 64
     patches = []
@@ -129,23 +132,26 @@ def collate_fn_valid_test(batch):
 
     return stacked_patches
 
+
 def unet_image_collate_fn_valid_test(batch):
     batch = [torch.tensor(item) for item in batch]
     stacked_batch = torch.stack(batch)
     stacked_batch = stacked_batch.float() / 255.0
     return stacked_batch
 
-def unet_valid_collate(batch): 
-    images, labels = zip(*batch) 
+
+def unet_valid_collate(batch):
+    images, labels = zip(*batch)
     images = unet_image_collate_fn_valid_test(images)
     labels = [torch.tensor(label) for label in labels]
     labels = torch.stack(labels, dim=0).long()
     return images, labels
 
+
 def unet_train_collate(batch):
     custom_transform = CustomTransform()
     images, labels = zip(*batch)
-    
+
     transformed_images = []
     transformed_labels = []
 
@@ -160,18 +166,18 @@ def unet_train_collate(batch):
 
     images = torch.stack(transformed_images)
     labels = torch.stack(transformed_labels)
-    
+
     return images, labels
 
-def unet_inference(batch): 
+
+def unet_inference(batch):
     batch = [torch.tensor(item) for item in batch]
     stacked_batch = torch.stack(batch)
     stacked_batch = stacked_batch.float() / 255.0
     return stacked_batch
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     # transform_train = transforms.Compose([
     #     # transforms.Resize((48, 48)),
     #     transforms.RandomHorizontalFlip(),
@@ -203,19 +209,27 @@ if __name__ == '__main__':
 
     ###################################################################################################################
 
-    training_dataset = np.load('/home/mhill/Projects/cathepsin/data/training_dataset.npy')
-    validation_dataset = np.load('/home/mhill/Projects/cathepsin/data/validation_dataset.npy')
-    testing_dataset = np.load('/home/mhill/Projects/cathepsin/data/testing_dataset.npy')
+    training_dataset = np.load(
+        "/home/mhill/Projects/cathepsin/data/training_dataset.npy"
+    )
+    validation_dataset = np.load(
+        "/home/mhill/Projects/cathepsin/data/validation_dataset.npy"
+    )
+    testing_dataset = np.load("/home/mhill/Projects/cathepsin/data/testing_dataset.npy")
 
-    
     train_dataset = CustomDataset(training_dataset)
     valid_dataset = CustomDataset(validation_dataset)
     test_dataset = CustomDataset(testing_dataset)
 
-
-    train_dataloader = DataLoader(train_dataset, batch_size=16, shuffle=True, collate_fn=collate_fn_train)
-    valid_dataloader = DataLoader(valid_dataset, batch_size=16, shuffle=False, collate_fn=collate_fn_valid_test)
-    test_dataloader = DataLoader(test_dataset, batch_size=16, shuffle=False, collate_fn=collate_fn_valid_test)
+    train_dataloader = DataLoader(
+        train_dataset, batch_size=16, shuffle=True, collate_fn=collate_fn_train
+    )
+    valid_dataloader = DataLoader(
+        valid_dataset, batch_size=16, shuffle=False, collate_fn=collate_fn_valid_test
+    )
+    test_dataloader = DataLoader(
+        test_dataset, batch_size=16, shuffle=False, collate_fn=collate_fn_valid_test
+    )
 
     for data in train_dataloader:
         print(data.size())
@@ -230,22 +244,22 @@ if __name__ == '__main__':
         break
 
     # for data in train_dataset:
-    #     plt.imshow(data[:3, :, :].transpose(1, 2, 0))
-    #     # plt.imshow(data.permute(1, 2, 0))
+    #     plt.imshow(data[:3, :, :].transpose(01, 02, 0))
+    #     # plt.imshow(data.permute(01, 02, 0))
     #     plt.axis('off')
     #     plt.show()
     #     break
     #
     # for data in valid_dataset:
-    #     plt.imshow(data[:3, :, :].transpose(1, 2, 0))
-    #     # plt.imshow(data.permute(1, 2, 0))
+    #     plt.imshow(data[:3, :, :].transpose(01, 02, 0))
+    #     # plt.imshow(data.permute(01, 02, 0))
     #     plt.axis('off')
     #     plt.show()
     #     break
     #
     # for data in test_dataset:
-    #     plt.imshow(data[:3, :, :].transpose(1, 2, 0))
-    #     # plt.imshow(data.permute(1, 2, 0))
+    #     plt.imshow(data[:3, :, :].transpose(01, 02, 0))
+    #     # plt.imshow(data.permute(01, 02, 0))
     #     plt.axis('off')
     #     plt.show()
     #     break

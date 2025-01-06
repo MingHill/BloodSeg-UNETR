@@ -1,26 +1,20 @@
-import os
-import time
-import toml
-import pprint
-import logging
 import argparse
+import logging
+import os
+import pprint
+import time
 
 import numpy as np
-
+import toml
 import torch
-
-from torchvision import transforms
-from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import OneCycleLR
-
+from torch.utils.data import DataLoader
 from transformers import ViTMAEConfig, ViTMAEForPreTraining
+
+from src.datasets import CustomDataset, collate_fn_train, collate_fn_valid_test
 from src.models import ViTMAEEmbeddingsMasking
-
 from src.trainer import Trainer
-from src.datasets import CustomDataset ,collate_fn_train, collate_fn_valid_test
-
 from src.utils import select_device
-
 
 if __name__ == '__main__':
     tic = time.time()
@@ -45,9 +39,6 @@ if __name__ == '__main__':
     torch.manual_seed(config["RANDOM_SEED"])
     torch.cuda.manual_seed(config["RANDOM_SEED"])
 
-    # enable for debugging (slows down compute)
-    torch.backends.cudnn.deterministic = False
-
     # ----------------------> datasets <----------------------
     os.environ["TRAIN_DATASET"] = os.path.expandvars(config["TRAIN_DATASET"])
     os.environ["VALID_DATASET"] = os.path.expandvars(config["VALID_DATASET"])
@@ -56,25 +47,6 @@ if __name__ == '__main__':
     training_dataset = np.load(os.environ["TRAIN_DATASET"])
     validation_dataset = np.load(os.environ["VALID_DATASET"])
     testing_dataset = np.load(os.environ["TEST_DATASET"])
-
-    # --> using random crop <--
-    # transform_train = transforms.Compose([
-    #     transforms.RandomCrop(64),
-    #     transforms.RandomHorizontalFlip(),
-    #     transforms.RandomVerticalFlip(),
-    # ])
-    # transform = transforms.Compose([transforms.RandomCrop(64)])
-
-    # train_dataset = CustomDataset(training_dataset, transform=transform_train)
-    # train_eval_dataset = CustomDataset(training_dataset, transform=transform)
-    # valid_dataset = CustomDataset(validation_dataset, transform=transform)
-    # test_dataset = CustomDataset(testing_dataset, transform=transform)
-
-    # train_dataloader = DataLoader(train_dataset, batch_size=config["BATCH_SIZE"], shuffle=True)
-    # train_eval_dataloader = DataLoader(train_eval_dataset, batch_size=config["BATCH_SIZE"], shuffle=True)
-    # valid_dataloader = DataLoader(valid_dataset, batch_size=config["BATCH_SIZE"], shuffle=False)
-    # test_dataloader = DataLoader(test_dataset, batch_size=config["BATCH_SIZE"], shuffle=False)
-    # --> using random crop <--
 
     # --> using collate functions <--
     train_dataset = CustomDataset(training_dataset)

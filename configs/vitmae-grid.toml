@@ -1,6 +1,6 @@
 # python vitmae-grid.py --config configs/vitmae-grid.toml
-COMMENT = "Run 1 (using collate functions)"
-LOG_DIR = "/home/mhill/Projects/cathepsin/logs/vitmae-grid/2"
+COMMENT = ""
+LOG_DIR = "/home/mhill/Projects/cathepsin/logs/vitmae-grid/--"
 
 RANDOM_SEED = 42
 
@@ -27,7 +27,7 @@ NUM_CHANNELS = 16
 MASK_TYPE = 'grid'  # (grid or random)
 MASK_RATIO = 0.50
 NORM_PIX_LOSS = 1
-LAYER_NORM_EPS = 1e-5
+LAYER_NORM_EPS = 1e-6
 
 HIDDEN_SIZE = 192
 INTERMEDIATE_SIZE = 768
@@ -46,5 +46,3 @@ DECODER_NUM_ATTENTION_HEADS = 6
 TRAIN_DATASET = '/home/mhill/Projects/cathepsin/data/training_dataset.npy'
 VALID_DATASET = '/home/mhill/Projects/cathepsin/data/validation_dataset.npy'
 TEST_DATASET = '/home/mhill/Projects/cathepsin/data/testing_dataset.npy'
-
-
